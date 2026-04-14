@@ -48,14 +48,13 @@ export function ComparisonItem({ className, position, ...props }: HTMLAttributes
   return <motion.div className={cn("absolute inset-0 size-full object-cover", className)} style={{ clipPath: clip }} {...(props as any)} />
 }
 
-export function ComparisonHandle({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
+export function ComparisonHandle({ className }: { className?: string }) {
   const { motionSliderPosition } = use()
   const left = useTransform(motionSliderPosition, (v) => `${v}%`)
   return (
     <motion.div
-      className={cn("absolute top-0 z-10 flex h-full w-9 -translate-x-1/2 items-center justify-center", className)}
+      className={cn("absolute top-0 z-10 flex h-full w-9 -translate-x-1/2 items-center justify-center cursor-ew-resize", className)}
       style={{ left }}
-      {...props}
     >
       <div className="flex flex-col items-center">
         <div className="h-full w-[1px] bg-black/10" />

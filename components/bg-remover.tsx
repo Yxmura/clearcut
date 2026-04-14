@@ -1,12 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { Logo } from "./logo"
-import { UploadArea } from "./upload-area"
 import { ResultPanel } from "./result-panel"
-import { Progress } from "./ui/progress"
-import { Badge } from "./ui/badge"
-import { Separator } from "./ui/separator"
 
 export type ProcessingState = "idle" | "loading-model" | "processing" | "done" | "error"
 
@@ -21,13 +16,15 @@ export function BgRemover() {
   const [progress, setProgress] = useState(0)
   const [timeRemaining, setTimeRemaining] = useState<string | null>(null)
   const [countdown, setCountdown] = useState<number>(0)
-  const [detectedDevice, setDetectedDevice] = useState<string>('')
+  const [detectedDevice, setDetectedDevice] = useState<string>("")
   const [result, setResult] = useState<ImageResult | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [isDragging, setIsDragging] = useState(false)
   const pipeRef = useRef<any>(null)
   const preloadRef = useRef(false)
   const progressRef = useRef<{ loaded: number; time: number }[]>([])
   const countdownRef = useRef<NodeJS.Timeout | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (!preloadRef.current) {
@@ -184,7 +181,7 @@ export function BgRemover() {
       setState("error")
       URL.revokeObjectURL(originalUrl)
       if (countdownRef.current) clearInterval(countdownRef.current)
-setCountdown(0)
+      setCountdown(0)
     }
   }, [])
 
@@ -198,99 +195,175 @@ setCountdown(0)
     if (countdownRef.current) clearInterval(countdownRef.current)
   }
 
+  const handleFile = (file: File) => {
+    if (file.type.startsWith("image/")) processImage(file)
+  }
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+    const file = e.dataTransfer.files[0]
+    if (file) handleFile(file)
+  }
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = () => setIsDragging(false)
+
   const isLoading = state === "loading-model" && !pipeRef.current
   const isProcessing = state === "processing"
 
   return (
-    <main className="min-h-screen bg-background text-foreground flex flex-col">
-      <section className="flex-1 flex flex-col items-center justify-center px-4 md:px-6 py-10 md:py-16">
-        {isLoading ? (
-          <div className="w-full max-w-sm text-center space-y-5 fade-in">
-            <div className="flex items-center justify-center gap-2.5">
-              <Logo className="w-5 h-5 text-muted-foreground/50" />
-              <span className="text-sm font-medium">Loading model</span>
-            </div>
-            <div className="space-y-2">
-              <Progress value={progress} className="h-1.5" indicatorClassName="bg-[var(--accent-color)]" />
-              <div className="flex items-center justify-between text-[11px] tabular-nums text-muted-foreground">
-                <span>176 MB · RMBG 1.4</span>
-                {timeRemaining && <span>{timeRemaining} left</span>}
-              </div>
-            </div>
-          </div>
-        ) : state === "idle" ? (
-          <div className="w-full max-w-xl">
-            <div className="text-center space-y-2 mb-8 fade-in">
-              <div className="flex items-center justify-center gap-2 mb-4">
-                <Logo className="w-5 h-5 text-foreground/70" />
-                <span className="text-sm font-semibold tracking-tight">ClearCut</span>
-              </div>
-              <h1 className="text-3xl md:text-4xl lg:text-[2.75rem] font-semibold tracking-[-0.03em] leading-[1.1]">
-                Remove any background
-              </h1>
-              <p className="text-muted-foreground text-[15px] leading-relaxed max-w-sm mx-auto">
-                Pixel-perfect results, processed in your browser. Your images never leave your device.
-              </p>
-            </div>
+    <div className="min-h-screen bg-background text-foreground font-mono">
+      {/* Dot-grid background */}
+      <div className="fixed inset-0 -z-10 h-full w-full bg-grid" />
 
-            <div className="fade-in fade-in-delay-1" style={{ animationFillMode: 'both' }}>
-              <UploadArea onFile={processImage} />
-            </div>
+      {/* Main container */}
+      <div className="max-w-4xl mx-auto p-8">
 
-            <div className="mt-5 flex flex-wrap items-center justify-center gap-2 fade-in fade-in-delay-2" style={{ animationFillMode: 'both' }}>
-              <Badge variant="outline" className="text-[11px] font-normal border-border/60 text-muted-foreground/70 gap-1.5">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                Zero uploads
-              </Badge>
-              <Badge variant="outline" className="text-[11px] font-normal border-border/60 text-muted-foreground/70 gap-1.5">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                {detectedDevice === 'webgpu' ? '~5s per image' : '~10s per image'}
-              </Badge>
-              <Badge variant="outline" className="text-[11px] font-normal border-border/60 text-muted-foreground/70 gap-1.5">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
-                HD PNG output
-              </Badge>
-            </div>
-          </div>
-        ) : isProcessing ? (
-          <div className="w-full max-w-lg text-center space-y-5 fade-in">
-            <div className="relative w-full aspect-[4/3] rounded-2xl border border-border/80 overflow-hidden bg-muted/30">
-              {/* Real countdown overlay */}
-              <div className="absolute inset-0 flex flex-col items-center justify-center z-10 bg-background/60 backdrop-blur-sm">
-                <span className="countdown-number text-7xl md:text-8xl font-bold text-foreground/90">
-                  {countdown !== null ? countdown.toFixed(1) : '…'}
-                </span>
-                <span className="text-sm text-muted-foreground mt-2 font-medium">
-                  {countdown !== null && countdown > 0 ? 'seconds remaining' : 'finishing…'}
-                </span>
-              </div>
-            </div>
-            <p className="text-sm text-muted-foreground">Removing background…</p>
-          </div>
-        ) : state === "done" && result ? (
-          <div className="w-full max-w-5xl fade-in">
-            <ResultPanel result={result} onReset={reset} />
-          </div>
-        ) : state === "error" ? (
-          <div className="w-full max-w-xs text-center space-y-4 fade-in">
-            <div className="w-11 h-11 mx-auto rounded-full border border-border flex items-center justify-center text-muted-foreground">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-                <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+        {/* Hero section */}
+        <section className="py-16">
+          <div className="window-box">
+            {/* Title bar */}
+            <div className="window-titlebar">
+              <span>[CLEAR_CUT.EXE]</span>
+              <svg width="64" height="16" viewBox="0 0 64 16" fill="none" className="opacity-70">
+                <rect x="0" y="0" width="16" height="16" fill="currentColor"/>
+                <rect x="24" y="0" width="16" height="16" fill="currentColor"/>
+                <rect x="48" y="0" width="16" height="16" fill="currentColor"/>
               </svg>
             </div>
-            <p className="text-sm text-muted-foreground">{error}</p>
-            <button onClick={reset} className="text-sm text-[var(--accent-color)] hover:underline underline-offset-4 font-medium">
-              Try again
-            </button>
-          </div>
-        ) : null}
-      </section>
 
-      <Separator className="opacity-50" />
-      <footer className="px-6 py-2.5 text-center text-[11px] text-muted-foreground/50">
-        100% local · No uploads · RMBG 1.4 · {detectedDevice === 'webgpu' ? 'WebGPU' : 'WASM'}
-      </footer>
-    </main>
+            {/* Content */}
+            <div className="p-6">
+              {/* Terminal header */}
+              <div className="mb-6 space-y-1">
+                <p className="text-xs text-muted-foreground">&gt; Remove any background from your images.</p>
+                <p className="text-xs text-muted-foreground">&gt; 100% local AI — nothing leaves your browser.</p>
+                <p className="text-xs text-muted-foreground">&gt; {detectedDevice === "webgpu" ? "WebGPU acceleration active." : detectedDevice === "wasm" ? "Running on WASM." : "Detecting runtime..."}</p>
+              </div>
+
+              {/* Upload area */}
+              {isLoading ? (
+                <div className="space-y-4 fade-in">
+                  <p className="text-xs">&gt; Loading model...</p>
+                  <div className="progress-bar w-full">
+                    <div className="progress-bar-fill" style={{ width: `${progress}%` }} />
+                  </div>
+                  <div className="flex justify-between text-[10px] text-muted-foreground">
+                    <span>176 MB · RMBG 1.4</span>
+                    {timeRemaining && <span>{timeRemaining} left</span>}
+                  </div>
+                </div>
+              ) : isProcessing ? (
+                <div className="space-y-4 fade-in">
+                  <p className="text-xs">&gt; Processing image...</p>
+                  <div className="border-2 border-foreground p-6 text-center">
+                    <span className="countdown-number text-5xl font-bold">
+                      {countdown.toFixed(1)}
+                    </span>
+                    <p className="text-[10px] text-muted-foreground mt-2">seconds remaining</p>
+                  </div>
+                </div>
+              ) : state === "done" && result ? (
+                <ResultPanel result={result} onReset={reset} />
+              ) : state === "error" ? (
+                <div className="space-y-4 fade-in">
+                  <div className="border-2 border-foreground p-6">
+                    <p className="text-xs text-muted-foreground mb-4">&gt; ERROR:</p>
+                    <p className="text-xs mb-4">{error}</p>
+                    <button onClick={reset} className="btn-primary">RETRY</button>
+                  </div>
+                </div>
+              ) : (
+                <div
+                  className={`upload-zone ${isDragging ? "border-solid bg-muted" : ""}`}
+                  onDrop={handleDrop}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) handleFile(file)
+                    }}
+                  />
+                  <p className="text-xs mb-2">&gt; DROP IMAGE HERE</p>
+                  <p className="text-[10px] text-muted-foreground">or click to browse · PNG, JPG, WEBP</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Info boxes */}
+        {state === "idle" && (
+          <section className="grid md:grid-cols-3 gap-4 pb-16 fade-in fade-in-delay-1">
+            <div className="window-box">
+              <div className="window-titlebar">
+                <span>[SECURITY.INI]</span>
+                <svg width="64" height="16" viewBox="0 0 64 16" fill="none" className="opacity-70">
+                  <rect x="0" y="0" width="16" height="16" fill="currentColor"/>
+                  <rect x="24" y="0" width="16" height="16" fill="currentColor"/>
+                  <rect x="48" y="0" width="16" height="16" fill="currentColor"/>
+                </svg>
+              </div>
+              <div className="p-4 space-y-2">
+                <p className="text-[10px] text-muted-foreground">&gt; Zero uploads</p>
+                <p className="text-xs">All processing happens locally in your browser. Your images never touch a server.</p>
+              </div>
+            </div>
+
+            <div className="window-box">
+              <div className="window-titlebar">
+                <span>[SPEED.CFG]</span>
+                <svg width="64" height="16" viewBox="0 0 64 16" fill="none" className="opacity-70">
+                  <rect x="0" y="0" width="16" height="16" fill="currentColor"/>
+                  <rect x="24" y="0" width="16" height="16" fill="currentColor"/>
+                  <rect x="48" y="0" width="16" height="16" fill="currentColor"/>
+                </svg>
+              </div>
+              <div className="p-4 space-y-2">
+                <p className="text-[10px] text-muted-foreground">&gt; {detectedDevice === "webgpu" ? "~5s per image" : detectedDevice === "wasm" ? "~10s per image" : "~5s per image"}</p>
+                <p className="text-xs">Powered by {detectedDevice === "webgpu" ? "WebGPU" : detectedDevice === "wasm" ? "WASM" : "RMBG 1.4"} AI acceleration.</p>
+              </div>
+            </div>
+
+            <div className="window-box">
+              <div className="window-titlebar">
+                <span>[OUTPUT.FMT]</span>
+                <svg width="64" height="16" viewBox="0 0 64 16" fill="none" className="opacity-70">
+                  <rect x="0" y="0" width="16" height="16" fill="currentColor"/>
+                  <rect x="24" y="0" width="16" height="16" fill="currentColor"/>
+                  <rect x="48" y="0" width="16" height="16" fill="currentColor"/>
+                </svg>
+              </div>
+              <div className="p-4 space-y-2">
+                <p className="text-[10px] text-muted-foreground">&gt; HD PNG output</p>
+                <p className="text-xs">Lossless PNG with transparency mask. Ready for any use case.</p>
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* Footer */}
+        <footer className="border-t-2 border-foreground pt-6 pb-8 flex justify-between items-center">
+          <p className="text-[10px] text-muted-foreground">
+            © 2026 ClearCut · RMBG 1.4 · {detectedDevice === "webgpu" ? "WebGPU" : detectedDevice === "wasm" ? "WASM" : "..."}
+          </p>
+          <p className="text-[10px] text-muted-foreground">
+            100% local · No uploads
+          </p>
+        </footer>
+      </div>
+    </div>
   )
 }
 
