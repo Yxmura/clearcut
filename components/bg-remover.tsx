@@ -46,7 +46,8 @@ export function BgRemover() {
 
     try {
       const { AutoModel, AutoProcessor, env } = await import("@huggingface/transformers")
-      ;(env as any).allowWasmCache = false
+      ;(env as any).allowWasmCache = true
+      ;(env as any).backends.onnx.wasm.numThreads = navigator.hardwareConcurrency ?? 4
 
       const progressCb = (p: any) => {
         if (p.status === "progress" && p.total) {
@@ -69,18 +70,31 @@ export function BgRemover() {
         }
       }
 
-      const model = await AutoModel.from_pretrained("briaai/RMBG-1.4", {
-        device: "webgpu",
-        dtype: "fp16",
-        progress_callback: progressCb,
-      } as any)
+      let model: any
+      let device = "webgpu"
+
+      try {
+        model = await AutoModel.from_pretrained("briaai/RMBG-1.4", {
+          device: "webgpu",
+          dtype: "fp16",
+          progress_callback: progressCb,
+        } as any)
+      } catch {
+        console.warn("WebGPU unavailable, falling back to WASM")
+        device = "wasm"
+        model = await AutoModel.from_pretrained("briaai/RMBG-1.4", {
+          device: "wasm",
+          dtype: "fp32",
+          progress_callback: progressCb,
+        } as any)
+      }
 
       const processor = await AutoProcessor.from_pretrained("briaai/RMBG-1.4", {
         progress_callback: progressCb,
       } as any)
 
       pipeRef.current = { model, processor }
-      setDetectedDevice("webgpu")
+      setDetectedDevice(device)
       setState("idle")
       setTimeRemaining(null)
     } catch (err: any) {
@@ -92,8 +106,11 @@ export function BgRemover() {
 
   const estimateProcessingTime = (width: number, height: number): number => {
     const pixels = width * height
-    const baseTime = 2.5 + (pixels / 1_000_000) * 1.5
-    return Math.max(2, Math.min(20, baseTime))
+    const isWebGPU = detectedDevice === "webgpu"
+    const baseTime = isWebGPU
+      ? 2.5 + (pixels / 1_000_000) * 1.5
+      : 5 + (pixels / 1_000_000) * 3
+    return Math.max(isWebGPU ? 2 : 5, Math.min(isWebGPU ? 20 : 35, baseTime))
   }
 
   const processImage = useCallback(async (file: File) => {
@@ -227,7 +244,7 @@ setCountdown(0)
               </Badge>
               <Badge variant="outline" className="text-[11px] font-normal border-border/60 text-muted-foreground/70 gap-1.5">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
-                {detectedDevice === 'webgpu' ? '~6s per image' : '~12s per image'}
+                {detectedDevice === 'webgpu' ? '~5s per image' : '~10s per image'}
               </Badge>
               <Badge variant="outline" className="text-[11px] font-normal border-border/60 text-muted-foreground/70 gap-1.5">
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
