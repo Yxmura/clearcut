@@ -1,5 +1,7 @@
-@import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
 :root {
@@ -27,6 +29,27 @@
   --chart-3: oklch(0.5 0 0);
   --chart-4: oklch(0.7 0 0);
   --chart-5: oklch(0.6 0.25 15);
+  --code-bg: #111827;
+  --code-fg: #e5e7eb;
+  --code-border: #1f2937;
+  --code-line: #374151;
+  --code-keyword: #f472b6;
+  --code-string: #34d399;
+  --code-number: #fbbf24;
+  --code-title: #60a5fa;
+  --code-comment: #9ca3af;
+  --code-meta: #22d3ee;
+  --code-scrollbar-track: #0b1220;
+  --code-scrollbar-thumb: #334155;
+  --code-scrollbar-thumb-hover: #475569;
+  --sidebar: oklch(0.98 0 0);
+  --sidebar-foreground: oklch(0 0 0);
+  --sidebar-primary: oklch(0 0 0);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.95 0 0);
+  --sidebar-accent-foreground: oklch(0 0 0);
+  --sidebar-border: oklch(0.2 0 0);
+  --sidebar-ring: oklch(0.6 0.25 15);
   --radius: 0;
   --shadow-x: 0;
   --shadow-y: 2px;
@@ -42,6 +65,8 @@
   --shadow-lg: 0 4px 0 0px hsl(0 0% 0% / 0.15);
   --shadow-xl: 0 6px 0 0px hsl(0 0% 0% / 0.15);
   --shadow-2xl: 0 8px 0 0px hsl(0 0% 0% / 0.25);
+  --tracking-normal: 0.05em;
+  --spacing: 0.25rem;
 }
 
 .dark {
@@ -69,7 +94,34 @@
   --chart-3: oklch(0.6 0 0);
   --chart-4: oklch(0.4 0 0);
   --chart-5: oklch(0.6 0.25 15);
+  --code-bg: #020617;
+  --code-fg: #e2e8f0;
+  --code-border: #1e293b;
+  --code-line: #334155;
+  --code-keyword: #f472b6;
+  --code-string: #4ade80;
+  --code-number: #fbbf24;
+  --code-title: #60a5fa;
+  --code-comment: #94a3b8;
+  --code-meta: #22d3ee;
+  --code-scrollbar-track: #020617;
+  --code-scrollbar-thumb: #334155;
+  --code-scrollbar-thumb-hover: #475569;
+  --sidebar: oklch(0.1 0 0);
+  --sidebar-foreground: oklch(1 0 0);
+  --sidebar-primary: oklch(1 0 0);
+  --sidebar-primary-foreground: oklch(0 0 0);
+  --sidebar-accent: oklch(0.15 0 0);
+  --sidebar-accent-foreground: oklch(1 0 0);
+  --sidebar-border: oklch(0.3 0 0);
+  --sidebar-ring: oklch(0.6 0.25 15);
   --radius: 0;
+  --shadow-x: 0;
+  --shadow-y: 2px;
+  --shadow-blur: 0;
+  --shadow-spread: 0px;
+  --shadow-opacity: 0.15;
+  --shadow-color: oklch(0 0 0);
   --shadow-2xs: 0 1px 0 0px hsl(0 0% 0% / 0.1);
   --shadow-xs: 0 1px 0 0px hsl(0 0% 0% / 0.1);
   --shadow-sm: 0 2px 0 0px hsl(0 0% 0% / 0.15);
@@ -80,33 +132,110 @@
   --shadow-2xl: 0 8px 0 0px hsl(0 0% 0% / 0.25);
 }
 
+@theme inline {
+  --font-sans: "Geist", "Geist Fallback";
+  --font-mono: "Press Start 2P", "Geist Mono";
+  --font-geist: "Geist Mono", "monospace";
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+  --font-geist: var(--font-geist);
+  --font-serif: var(--font-serif);
+
+  --radius-sm: 0;
+  --radius-md: 0;
+  --radius-lg: 0;
+  --radius-xl: 0;
+
+  --shadow-2xs: var(--shadow-2xs);
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow: var(--shadow);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-xl: var(--shadow-xl);
+  --shadow-2xl: var(--shadow-2xl);
+}
+
 @layer base {
-  * {
-    @apply border-border;
-  }
   body {
-    @apply bg-background text-foreground;
-    font-family: "Geist Mono", ui-monospace, SFMono-Regular, "SF Mono", Consolas,
-      "Liberation Mono", Menlo, monospace;
     image-rendering: pixelated;
     image-rendering: crisp-edges;
-  }
-  ::selection {
-    background-color: var(--accent);
-    color: var(--accent-foreground);
+    font-family: "Press Start 2P", "Geist Mono";
   }
 }
 
-/* Scrollbar */
+* {
+  cursor: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAAXNSR0IArs4c6QAAARRJREFUWEfdl0ESwyAIRXXr2vtf0L1bO3GqiVTka52SpqukwfD4IhBrzl+6XB+Xltxzt3RdsYPWX43UAJL33oQQmgitrWw0kgY0pb4Ag/WtH+dcijEa+iJ1gLqRpxL5Lw50VYlD3qwh8AIdAJr6ZWs4YM6eO1WiAr8AKD6GWwHWBMMpxCX1Rx1ApeWAvgFYUkJyWAJCFLgXQKVhKt1sck4rcBuAWRApOS/P8wHotcxud9l1OqYBdjnmeoiogAbA0nFEKyXtsqOxaUtplpISmdsgELRL0nrwFwBNTrCjsVAxZyrh7PjdnZTQwQTZAinB0ZGu6+s5AAOZhkFuU0ATgDslUHCQkZSF7+dL35Y7AUDO1kwd4AWXSKwd8HVMJQAAAABJRU5ErkJggg==")
+      0 0,
+    auto;
+}
+
+a,
+button,
+.cursor-pointer {
+  cursor: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAzElEQVRYR+2X0Q6AIAhF5f8/2jYXZkwEjNSVvVUjDpcrGgT7FUkI2D9xRfQETwNIiWO85wfINfQUEyxBG2ArsLwC0jioGt5zFcwF4OYDPi/mBYKm4t0U8ATgRm3ThFoAqkhNgWkA0jJLvaOVSs7j3qMnSgXWBMiWPXe94QqMBMBc1VZIvaTu5u5pQewq0EqNZvIEMCmxAawK0DNkay9QmfFNAJUXfgGgUkLaE7j/h8fnASkxHTz0DGIBMCnBeeM7AArpUd3mz2x3C7wADglA8BcWMZhZAAAAAElFTkSuQmCC")
+      14 0,
+    auto !important;
+}
+
 body {
   --sb-track-color: white;
   --sb-thumb-color: var(--accent);
   --sb-size: 10px;
 }
 
-body::-webkit-scrollbar { width: var(--sb-size); }
-body::-webkit-scrollbar-track { background: var(--sb-track-color); border-radius: 1px; }
-body::-webkit-scrollbar-thumb { background: var(--sb-thumb-color); border-radius: 1px; }
+body::-webkit-scrollbar {
+  width: var(--sb-size);
+}
+
+body::-webkit-scrollbar-track {
+  background: var(--sb-track-color);
+  border-radius: 1px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background: var(--sb-thumb-color);
+  border-radius: 1px;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  body {
+    scrollbar-color: var(--sb-thumb-color) var(--sb-track-color);
+  }
+}
 
 /* Checkerboard for transparent previews */
 .checkerboard {
@@ -143,4 +272,11 @@ body::-webkit-scrollbar-thumb { background: var(--sb-thumb-color); border-radius
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Consolas,
     "Liberation Mono", Menlo, monospace;
   font-variant-numeric: tabular-nums;
+}
+
+/* Dot-grid background - exact yamura reference */
+.bg-grid {
+  background-image: linear-gradient(to right, #8080800a 1px, transparent 1px),
+    linear-gradient(to bottom, #8080800a 1px, transparent 1px);
+  background-size: 14px 24px;
 }

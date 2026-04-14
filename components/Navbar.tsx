@@ -2,7 +2,6 @@
 
 import { Button } from "@/components/ui/button";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import Link from "next/link";
 
 const Navbar = () => {
   const { isMobile } = useIsMobile();
