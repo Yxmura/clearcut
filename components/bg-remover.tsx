@@ -225,17 +225,17 @@ export function BgRemover() {
 
             <div className="text-sm space-y-2 pt-4 text-center">
               <p>
-                <span className="text-primary mr-2">&gt;</span>
+                <span className="text-primary  mr-2">&gt;</span>
                 Remove any background from your images.
               </p>
               <p>
-                <span className="text-primary mr-2">&gt;</span>
+                <span className="text-primary  mr-2">&gt;</span>
                 {detectedDevice === "webgpu" ? "WebGPU acceleration active." : detectedDevice === "wasm" ? "Running on WASM." : "Detecting runtime..."}
               </p>
             </div>
 
-            <div className="pt-4 pb-4 md:flex grid justify-center">
-              <Button variant="ghost">[GET STARTED]</Button>
+            <div className="pt-4 md:flex grid justify-center pb-4 gap-4 flex-none">
+              <Button>[DROP IMAGE]</Button>
             </div>
 
             <div className="px-6 pb-6">
@@ -246,7 +246,7 @@ export function BgRemover() {
                     <div className="bg-foreground h-full transition-all duration-200" style={{ width: `${progress}%` }} />
                   </div>
                   <div className="flex justify-between text-[10px] text-muted-foreground mt-2">
-                    <span>176 MB · RMBG 1.4</span>
+                    <span>176 MB - RMBG 1.4</span>
                     {timeRemaining && <span>{timeRemaining} left</span>}
                   </div>
                 </div>
@@ -267,7 +267,7 @@ export function BgRemover() {
                   <div className="border-2 border-foreground p-6">
                     <p className="text-[10px] text-muted-foreground mb-2">&gt; ERROR:</p>
                     <p className="text-xs mb-4">{error}</p>
-                    <Button onClick={reset} variant="ghost">[RETRY]</Button>
+                    <Button onClick={reset}>[RETRY]</Button>
                   </div>
                 </div>
               ) : (
@@ -289,41 +289,18 @@ export function BgRemover() {
                     }}
                   />
                   <p className="text-xs mb-2">&gt; DROP IMAGE HERE</p>
-                  <p className="text-[10px] text-muted-foreground">or click to browse · PNG, JPG, WEBP</p>
+                  <p className="text-[10px] text-muted-foreground">or click to browse - PNG, JPG, WEBP</p>
                 </div>
               )}
             </div>
           </div>
         </section>
 
-        {state === "idle" && (
-          <section className="grid md:grid-cols-3 gap-4 pb-16 fade-in fade-in-delay-1">
-            {([
-              { title: "[SECURITY.INI]", line1: "> Zero uploads", line2: "All processing happens locally. Images never leave your browser." },
-              { title: "[SPEED.CFG]", line1: "> ~5s per image", line2: "Powered by RMBG 1.4 with WebGPU acceleration." },
-              { title: "[OUTPUT.FMT]", line1: "> HD PNG output", line2: "Lossless PNG with transparency mask. Ready for any use case." },
-            ] as const).map(({ title, line1, line2 }) => (
-              <div key={title}>
-                <div className="border-2 border-foreground mb-2">
-                  <div className="bg-foreground text-background px-4 py-2 text-xs flex items-center justify-between">
-                    <span>{title}</span>
-                    <img src="/minmaxclose.svg" alt="Window controls" className="w-16 h-4" />
-                  </div>
-                </div>
-                <div className="border-2 border-t-0 border-foreground p-4 bg-background">
-                  <p className="text-[10px] text-muted-foreground">{line1}</p>
-                  <p className="text-xs mt-2">{line2}</p>
-                </div>
-              </div>
-            ))}
-          </section>
-        )}
-
-        <footer className="border-t-2 border-b-0 border-l-0 border-r-0 border-foreground pt-6 pb-8 flex justify-between items-center">
+        <footer className="border-t-2 border-foreground pt-6 pb-8 flex justify-between items-center">
           <p className="text-[10px] text-muted-foreground">
-            © {new Date().getFullYear()} ClearCut · RMBG 1.4 · {detectedDevice === "webgpu" ? "WebGPU" : detectedDevice === "wasm" ? "WASM" : "..."}
+            &copy; {new Date().getFullYear()} ClearCut - RMBG 1.4 - {detectedDevice === "webgpu" ? "WebGPU" : detectedDevice === "wasm" ? "WASM" : "..."}
           </p>
-          <p className="text-[10px] text-muted-foreground">100% local · No uploads</p>
+          <p className="text-[10px] text-muted-foreground">100% local - No uploads</p>
         </footer>
       </div>
     </>
