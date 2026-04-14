@@ -1,0 +1,6 @@
+<svg viewBox="0 0 60 20" shape-rendering="crispEdges" xmlns="http://www.w3.org/2000/svg">
+  <style>.f{fill:#c0c0c0}.h{fill:#fff}.s{fill:#808080}.i{fill:#000}</style>
+  <g transform="translate(-10,0)"><rect width="20" height="20" class="f"/><path d="M0 18V0h18v2H2v16z" class="h"/><path d="M20 20H0v-2h18V0h2z" class="s"/><path d="M6 13h8v2H6z" class="i"/></g>
+  <g transform="translate(15,0)"><rect width="20" height="20" class="f"/><path d="M0 18V0h18v2H2v16z" class="h"/><path d="M20 20H0v-2h18V0h2z" class="s"/><path d="M6 6h8v8H6V6zm1 2v5h6V8H7z" class="i" fill-rule="evenodd"/></g>
+  <g transform="translate(40,0)"><rect width="20" height="20" class="f"/><path d="M0 18V0h18v2H2v16z" class="h"/><path d="M20 20H0v-2h18V0h2z" class="s"/><path d="M6 6h2v2H6V6zm2 2h2v2H8V8zm2 2h2v2h-2v-2zm2-2h2v2h-2V8zm2-2h2v2h-2V6zM8 12h2v2H8v-2zm4 0h2v2h-2v-2z" class="i"/></g>
+</svg>

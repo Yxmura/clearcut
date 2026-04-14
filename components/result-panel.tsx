@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import type { ImageResult } from "./bg-remover"
+import { Button } from "./ui/button"
 import { Comparison, ComparisonItem, ComparisonHandle } from "./comparison-slider"
 
 interface ResultPanelProps {
@@ -20,26 +21,20 @@ export function ResultPanel({ result, onReset }: ResultPanelProps) {
   }
 
   return (
-    <div className="space-y-4 fade-in">
+    <div className="space-y-4 text-left fade-in">
       {/* Window box */}
-      <div className="window-box">
-        <div className="window-titlebar">
+      <div className="border-2 border-foreground bg-background">
+        {/* Title bar */}
+        <div className="bg-foreground text-background px-4 py-2 text-xs flex items-center justify-between border-b-2 border-foreground">
           <span>[RESULT.PNG]</span>
-          <svg width="64" height="16" viewBox="0 0 64 16" fill="none" className="opacity-70">
-            <rect x="0" y="0" width="16" height="16" fill="currentColor"/>
-            <rect x="24" y="0" width="16" height="16" fill="currentColor"/>
-            <rect x="48" y="0" width="16" height="16" fill="currentColor"/>
-          </svg>
+          <img src="/minmaxclose.svg" alt="Window controls" className="w-16 h-4" />
         </div>
+
         <div className="p-6 space-y-4">
-          {/* Actions */}
-          <div className="flex flex-col md:flex-row gap-3">
-            <button onClick={download} className="btn-primary text-center">
-              DOWNLOAD PNG
-            </button>
-            <button onClick={onReset} className="btn-accent text-center">
-              NEW IMAGE
-            </button>
+          {/* Buttons */}
+          <div className="flex gap-3">
+            <Button variant="ghost" onClick={download}>DOWNLOAD PNG</Button>
+            <Button variant="ghost" onClick={onReset}>NEW IMAGE</Button>
           </div>
 
           {/* Comparison */}
@@ -48,39 +43,51 @@ export function ResultPanel({ result, onReset }: ResultPanelProps) {
               <ComparisonItem position="left">
                 <img src={result.original} alt="Original" className="size-full object-contain" />
               </ComparisonItem>
-              <ComparisonItem position="right" className={bgStyle === "checker" ? "checkerboard" : bgStyle === "black" ? "bg-black" : "bg-white"}>
+              <ComparisonItem
+                position="right"
+                className={
+                  bgStyle === "checker"
+                    ? "checkerboard"
+                    : bgStyle === "black"
+                    ? "bg-black"
+                    : "bg-white"
+                }
+              >
                 <img src={result.processed} alt="Result" className="size-full object-contain" />
               </ComparisonItem>
               <ComparisonHandle />
             </Comparison>
+
             {/* Labels */}
             <div className="absolute top-2 left-2 z-10">
-              <span className="text-[10px] px-2 py-0.5 bg-background border border-foreground text-foreground">
+              <span className="text-[10px] px-2 py-0.5 bg-background border-2 border-foreground">
                 BEFORE
               </span>
             </div>
             <div className="absolute top-2 right-2 z-10">
-              <span className="text-[10px] px-2 py-0.5 bg-background border border-foreground text-foreground">
+              <span className="text-[10px] px-2 py-0.5 bg-background border-2 border-foreground">
                 AFTER
               </span>
             </div>
           </div>
 
-          {/* Background toggle + filename */}
+          {/* BG toggle + filename */}
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-muted-foreground">BG:</span>
               <div className="flex gap-1">
                 {([
-                  { value: "checker" as const, label: "Transparent", icon: <CheckerIcon /> },
-                  { value: "black" as const, label: "Black", icon: <SolidBox className="text-black" /> },
-                  { value: "white" as const, label: "White", icon: <SolidBox className="text-zinc-300" /> },
+                  { value: "checker" as const, icon: <CheckerIcon /> },
+                  { value: "black" as const, icon: <SolidBox className="text-black" /> },
+                  { value: "white" as const, icon: <SolidBox className="text-zinc-300" /> },
                 ]).map(({ value, icon }) => (
                   <button
                     key={value}
                     onClick={() => setBgStyle(value)}
                     className={`flex items-center justify-center w-8 h-7 border-2 border-foreground transition-all ${
-                      bgStyle === value ? "bg-foreground text-background" : "bg-background"
+                      bgStyle === value
+                        ? "bg-foreground text-background"
+                        : "bg-background"
                     }`}
                   >
                     {icon}
@@ -108,7 +115,7 @@ function CheckerIcon() {
 function SolidBox({ className }: { className?: string }) {
   return (
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" className={className}>
-      <rect width="14" height="14" rx="2" fill="currentColor" />
+      <rect width="14" height="14" fill="currentColor" />
     </svg>
   )
 }
