@@ -30,8 +30,8 @@ export function ResultPanel({ result, onReset }: ResultPanelProps) {
 
         <div className="p-6 space-y-4">
           <div className="flex gap-3">
-            <Button variant="ghost" onClick={download}>[DOWNLOAD PNG]</Button>
-            <Button variant="ghost" onClick={onReset}>[NEW IMAGE]</Button>
+            <Button onClick={download}>[DOWNLOAD PNG]</Button>
+            <Button onClick={onReset}>[NEW IMAGE]</Button>
           </div>
 
           <div className="relative border-2 border-foreground overflow-hidden">

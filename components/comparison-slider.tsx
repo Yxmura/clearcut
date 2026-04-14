@@ -1,8 +1,7 @@
 "use client"
 
-import { GripVertical } from "lucide-react"
-import { motion, useMotionValue, useSpring, useTransform } from "motion/react"
-import { createContext, type HTMLAttributes, type MouseEventHandler, type TouchEventHandler, useContext, useState } from "react"
+import { motion, useMotionValue, useTransform } from "motion/react"
+import { createContext, type HTMLAttributes, useContext, useState } from "react"
 import { cn } from "@/lib/utils"
 
 interface Ctx {
@@ -53,15 +52,15 @@ export function ComparisonHandle({ className }: { className?: string }) {
   const left = useTransform(motionSliderPosition, (v) => `${v}%`)
   return (
     <motion.div
-      className={cn("absolute top-0 z-10 flex h-full w-9 -translate-x-1/2 items-center justify-center cursor-ew-resize", className)}
+      className={cn("absolute top-0 z-10 flex h-full w-6 -translate-x-1/2 items-center justify-center cursor-grab active:cursor-grabbing", className)}
       style={{ left }}
     >
-      <div className="flex flex-col items-center">
-        <div className="h-full w-[1px] bg-black/10" />
-        <div className="flex items-center justify-center rounded-full bg-white shadow-lg border border-border/60 p-1.5 -my-1">
-          <GripVertical className="h-3.5 w-3.5 text-muted-foreground/70" />
+      <div className="flex items-center justify-center rounded-full bg-foreground p-1">
+        <div className="flex gap-0.5">
+          <div className="w-0.5 h-3 bg-background" />
+          <div className="w-0.5 h-3 bg-background" />
+          <div className="w-0.5 h-3 bg-background" />
         </div>
-        <div className="h-full w-[1px] bg-black/10" />
       </div>
     </motion.div>
   )
