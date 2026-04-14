@@ -2,8 +2,9 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import { Button } from "./ui/button"
-import { Ascii } from "./Ascii"
+import Ascii from "./Ascii"
 import { ResultPanel } from "./result-panel"
+import Navbar from "./Navbar"
 
 export type ProcessingState = "idle" | "loading-model" | "processing" | "done" | "error"
 
@@ -211,27 +212,18 @@ export function BgRemover() {
 
   return (
     <>
-      {/* Dot-grid background */}
-      <div className="fixed inset-0 -z-10 h-full w-full bg-grid" />
+      <div className="fixed inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[14px_24px]" />
 
-      {/* Main container */}
-      <div className="max-w-[1280px] mx-auto p-8 w-100vw h-100vh text-left">
+      <div className="max-w-[1280px] mx-auto p-8 w-100vw h-100vh text-left scroll-smooth selection:bg-accent selection:text-white">
 
-        {/* Hero / Main window */}
         <section className="flex items-center justify-center py-16">
-          <div className="mx-auto w-full max-w-4xl border-black dark:border-white border-2 text-center bg-background">
+          <div className="mx-auto w-full max-w-4xl border-black border-2 text-center bg-background">
 
-            {/* Title bar */}
-            <div className="bg-foreground text-background px-4 py-2 text-xs flex items-center justify-between border-b-2 border-foreground">
-              <span>[CLEAR_CUT.EXE]</span>
-              <img src="/minmaxclose.svg" alt="Window controls" className="w-16 h-4 cursor-pointer" />
-            </div>
+            <Navbar />
 
-            {/* ASCII art */}
             <Ascii />
 
-            {/* Status text */}
-            <div className="text-sm space-y-1 pt-4 pb-4 text-center">
+            <div className="text-sm space-y-2 pt-4 text-center">
               <p>
                 <span className="text-primary mr-2">&gt;</span>
                 Remove any background from your images.
@@ -242,7 +234,10 @@ export function BgRemover() {
               </p>
             </div>
 
-            {/* Upload / Progress / Result */}
+            <div className="pt-4 pb-4 md:flex grid justify-center">
+              <Button variant="ghost">[GET STARTED]</Button>
+            </div>
+
             <div className="px-6 pb-6">
               {isLoading ? (
                 <div className="text-left">
@@ -272,14 +267,12 @@ export function BgRemover() {
                   <div className="border-2 border-foreground p-6">
                     <p className="text-[10px] text-muted-foreground mb-2">&gt; ERROR:</p>
                     <p className="text-xs mb-4">{error}</p>
-                    <Button onClick={reset} variant="ghost">RETRY</Button>
+                    <Button onClick={reset} variant="ghost">[RETRY]</Button>
                   </div>
                 </div>
               ) : (
                 <div
-                  className={`border-2 border-dashed border-foreground p-8 text-center cursor-pointer transition-all ${
-                    isDragging ? "bg-muted border-solid" : "bg-background"
-                  }`}
+                  className={`border-2 border-dashed border-foreground p-8 text-center cursor-pointer transition-all ${isDragging ? "bg-muted border-solid" : "bg-background"}`}
                   onDrop={handleDrop}
                   onDragOver={(e) => { e.preventDefault(); setIsDragging(true) }}
                   onDragLeave={() => setIsDragging(false)}
@@ -303,30 +296,30 @@ export function BgRemover() {
           </div>
         </section>
 
-        {/* Info boxes */}
         {state === "idle" && (
           <section className="grid md:grid-cols-3 gap-4 pb-16 fade-in fade-in-delay-1">
-            {[
-              { title: "[SECURITY.INI]", line1: "> Zero uploads", line2: "All processing happens locally. Images never touch a server." },
-              { title: "[SPEED.CFG]", line1: `> ${detectedDevice === "webgpu" ? "~5s per image" : detectedDevice === "wasm" ? "~10s per image" : "~5s per image"}`, line2: "Powered by RMBG 1.4 AI acceleration." },
+            {([
+              { title: "[SECURITY.INI]", line1: "> Zero uploads", line2: "All processing happens locally. Images never leave your browser." },
+              { title: "[SPEED.CFG]", line1: "> ~5s per image", line2: "Powered by RMBG 1.4 with WebGPU acceleration." },
               { title: "[OUTPUT.FMT]", line1: "> HD PNG output", line2: "Lossless PNG with transparency mask. Ready for any use case." },
-            ].map(({ title, line1, line2 }) => (
-              <div key={title} className="border-2 border-foreground bg-background">
-                <div className="bg-foreground text-background px-4 py-2 text-xs flex items-center justify-between">
-                  <span>{title}</span>
-                  <img src="/minmaxclose.svg" alt="Window controls" className="w-16 h-4" />
+            ] as const).map(({ title, line1, line2 }) => (
+              <div key={title}>
+                <div className="border-2 border-foreground mb-2">
+                  <div className="bg-foreground text-background px-4 py-2 text-xs flex items-center justify-between">
+                    <span>{title}</span>
+                    <img src="/minmaxclose.svg" alt="Window controls" className="w-16 h-4" />
+                  </div>
                 </div>
-                <div className="p-4 space-y-2">
+                <div className="border-2 border-t-0 border-foreground p-4 bg-background">
                   <p className="text-[10px] text-muted-foreground">{line1}</p>
-                  <p className="text-xs">{line2}</p>
+                  <p className="text-xs mt-2">{line2}</p>
                 </div>
               </div>
             ))}
           </section>
         )}
 
-        {/* Footer */}
-        <footer className="border-t-2 border-foreground pt-6 pb-8 flex justify-between items-center">
+        <footer className="border-t-2 border-b-0 border-l-0 border-r-0 border-foreground pt-6 pb-8 flex justify-between items-center">
           <p className="text-[10px] text-muted-foreground">
             © {new Date().getFullYear()} ClearCut · RMBG 1.4 · {detectedDevice === "webgpu" ? "WebGPU" : detectedDevice === "wasm" ? "WASM" : "..."}
           </p>

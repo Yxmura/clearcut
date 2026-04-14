@@ -22,22 +22,18 @@ export function ResultPanel({ result, onReset }: ResultPanelProps) {
 
   return (
     <div className="space-y-4 text-left fade-in">
-      {/* Window box */}
       <div className="border-2 border-foreground bg-background">
-        {/* Title bar */}
         <div className="bg-foreground text-background px-4 py-2 text-xs flex items-center justify-between border-b-2 border-foreground">
           <span>[RESULT.PNG]</span>
           <img src="/minmaxclose.svg" alt="Window controls" className="w-16 h-4" />
         </div>
 
         <div className="p-6 space-y-4">
-          {/* Buttons */}
           <div className="flex gap-3">
-            <Button variant="ghost" onClick={download}>DOWNLOAD PNG</Button>
-            <Button variant="ghost" onClick={onReset}>NEW IMAGE</Button>
+            <Button variant="ghost" onClick={download}>[DOWNLOAD PNG]</Button>
+            <Button variant="ghost" onClick={onReset}>[NEW IMAGE]</Button>
           </div>
 
-          {/* Comparison */}
           <div className="relative border-2 border-foreground overflow-hidden">
             <Comparison className="w-full aspect-[4/3]">
               <ComparisonItem position="left">
@@ -58,7 +54,6 @@ export function ResultPanel({ result, onReset }: ResultPanelProps) {
               <ComparisonHandle />
             </Comparison>
 
-            {/* Labels */}
             <div className="absolute top-2 left-2 z-10">
               <span className="text-[10px] px-2 py-0.5 bg-background border-2 border-foreground">
                 BEFORE
@@ -71,7 +66,6 @@ export function ResultPanel({ result, onReset }: ResultPanelProps) {
             </div>
           </div>
 
-          {/* BG toggle + filename */}
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div className="flex items-center gap-2">
               <span className="text-[10px] text-muted-foreground">BG:</span>

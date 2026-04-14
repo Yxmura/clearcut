@@ -1,7 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&display=swap");
-@import "tailwindcss";
-
 @import url("https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap");
+@import "tailwindcss";
 
 :root {
   --background: oklch(1 0 0);
@@ -92,13 +91,10 @@
     image-rendering: pixelated;
     image-rendering: crisp-edges;
   }
-}
-
-/* Dot-grid background */
-.bg-grid {
-  background-image: linear-gradient(to right, oklch(0.5 0 0 / 0.04) 1px, transparent 1px),
-    linear-gradient(to bottom, oklch(0.5 0 0 / 0.04) 1px, transparent 1px);
-  background-size: 14px 24px;
+  ::selection {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
 }
 
 /* Scrollbar */
