@@ -212,32 +212,25 @@ export function BgRemover() {
 
   return (
     <>
-      <div className="fixed inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[14px_24px]" />
-
+      <div className="fixed inset-0 -z-10 h-full w-full bg-white bg-[linear-gradient(to_right,#8080800a_1px,transparent_1px),linear-gradient(to_bottom,#8080800a_1px,transparent_1px)] bg-size-[14px_24px]"></div>
       <div className="max-w-[1280px] mx-auto p-8 w-100vw h-100vh text-left scroll-smooth selection:bg-accent selection:text-white">
-
         <section className="flex items-center justify-center py-16">
           <div className="mx-auto w-full max-w-4xl border-black border-2 text-center bg-background">
-
-            <Navbar />
-
+            <Navbar currentLang="en" currentPage="home" />
             <Ascii />
-
             <div className="text-sm space-y-2 pt-4 text-center">
               <p>
                 <span className="text-primary  mr-2">&gt;</span>
-                Remove any background from your images.
+                AI BACKGROUND REMOVAL
               </p>
               <p>
                 <span className="text-primary  mr-2">&gt;</span>
-                {detectedDevice === "webgpu" ? "WebGPU acceleration active." : detectedDevice === "wasm" ? "Running on WASM." : "Detecting runtime..."}
+                100% LOCAL - NO SERVER UPLOADS
               </p>
             </div>
-
             <div className="pt-4 md:flex grid justify-center pb-4 gap-4 flex-none">
               <Button>[DROP IMAGE]</Button>
             </div>
-
             <div className="px-6 pb-6">
               {isLoading ? (
                 <div className="text-left">
@@ -252,7 +245,7 @@ export function BgRemover() {
                 </div>
               ) : isProcessing ? (
                 <div className="text-left space-y-3">
-                  <p className="text-xs">&gt; Removing background...</p>
+                  <p className="text-xs">&gt; Processing image...</p>
                   <div className="border-2 border-foreground p-8 text-center">
                     <span className="countdown-number text-5xl font-bold">
                       {countdown.toFixed(1)}
@@ -295,12 +288,11 @@ export function BgRemover() {
             </div>
           </div>
         </section>
-
         <footer className="border-t-2 border-foreground pt-6 pb-8 flex justify-between items-center">
           <p className="text-[10px] text-muted-foreground">
-            &copy; {new Date().getFullYear()} ClearCut - RMBG 1.4 - {detectedDevice === "webgpu" ? "WebGPU" : detectedDevice === "wasm" ? "WASM" : "..."}
+            &copy; {new Date().getFullYear()} ClearCut
           </p>
-          <p className="text-[10px] text-muted-foreground">100% local - No uploads</p>
+          <p className="text-[10px] text-muted-foreground">RMBG 1.4 - {detectedDevice === "webgpu" ? "WebGPU" : detectedDevice === "wasm" ? "WASM" : "..."}</p>
         </footer>
       </div>
     </>
