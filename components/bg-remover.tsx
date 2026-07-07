@@ -89,6 +89,7 @@ export function BgRemover() {
         model = await AutoModel.from_pretrained(MODEL_ID, {
           device: "webgpu",
           dtype: "fp16",
+          session_options: { graphOptimizationLevel: 'disabled' },
           progress_callback: progressCb,
         } as any);
       } catch {
