@@ -19,6 +19,9 @@ export interface ImageResult {
   name: string;
 }
 
+const MODEL_ID = "yamura4/RMBG-2.0-ONNX";
+const MODEL_SIZE_MB = 490;
+
 export function BgRemover() {
   const [state, setState] = useState<ProcessingState>("idle");
   const [progress, setProgress] = useState(0);
@@ -83,22 +86,25 @@ export function BgRemover() {
       let device = "webgpu";
 
       try {
-        model = await AutoModel.from_pretrained("briaai/RMBG-1.4", {
+        model = await AutoModel.from_pretrained(MODEL_ID, {
           device: "webgpu",
           dtype: "fp16",
+          model_file_name: "model_fp16",
           progress_callback: progressCb,
         } as any);
       } catch {
         console.warn("WebGPU unavailable, falling back to WASM");
         device = "wasm";
-        model = await AutoModel.from_pretrained("briaai/RMBG-1.4", {
+        (env as any).backends.onnx.wasm.proxy = false;
+        model = await AutoModel.from_pretrained(MODEL_ID, {
           device: "wasm",
-          dtype: "fp32",
+          dtype: "fp16",
+          model_file_name: "model_fp16",
           progress_callback: progressCb,
         } as any);
       }
 
-      const processor = await AutoProcessor.from_pretrained("briaai/RMBG-1.4", {
+      const processor = await AutoProcessor.from_pretrained(MODEL_ID, {
         progress_callback: progressCb,
       } as any);
 
@@ -108,7 +114,7 @@ export function BgRemover() {
       setTimeRemaining(null);
     } catch (err: any) {
       console.error(err);
-      setError(err?.message ?? "Failed to load RMBG-1.4");
+      setError(err?.message ?? "Failed to load RMBG-2.0");
       setState("error");
     }
   };
@@ -116,10 +122,11 @@ export function BgRemover() {
   const estimateProcessingTime = (width: number, height: number): number => {
     const pixels = width * height;
     const isWebGPU = detectedDevice === "webgpu";
+    const adjustedPixels = Math.max(pixels, 1024 * 1024);
     const baseTime = isWebGPU
-      ? 2.5 + (pixels / 1_000_000) * 1.5
-      : 5 + (pixels / 1_000_000) * 3;
-    return Math.max(isWebGPU ? 2 : 5, Math.min(isWebGPU ? 20 : 35, baseTime));
+      ? 1.5 + (adjustedPixels / 1_000_000) * 1.2
+      : 4 + (adjustedPixels / 1_000_000) * 2.5;
+    return Math.max(isWebGPU ? 1.5 : 4, Math.min(isWebGPU ? 15 : 30, baseTime));
   };
 
   const processImage = useCallback(async (file: File) => {
@@ -151,13 +158,13 @@ export function BgRemover() {
       }, 1000);
 
       const { pixel_values } = await processor(image);
-      const { output } = await model({ input: pixel_values });
+      const { alphas } = await model({ pixel_values });
 
       if (countdownRef.current) clearInterval(countdownRef.current);
       setCountdown(0);
 
       const mask = await RawImage.fromTensor(
-        output[0].mul(255).to("uint8"),
+        alphas[0].mul(255).to("uint8"),
       ).resize(image.width, image.height);
       const canvas = document.createElement("canvas");
       const img = new Image();
@@ -253,7 +260,7 @@ export function BgRemover() {
                     />
                   </div>
                   <div className="flex justify-between text-[10px] text-muted-foreground mt-2">
-                    <span>176 MB - RMBG 1.4</span>
+                    <span>{MODEL_SIZE_MB} MB - RMBG 2.0</span>
                     {timeRemaining && <span>{timeRemaining} left</span>}
                   </div>
                 </div>
@@ -316,7 +323,7 @@ export function BgRemover() {
             &copy; {new Date().getFullYear()} ClearCut
           </p>
           <p className="text-[10px] text-muted-foreground">
-            RMBG 1.4 -{" "}
+            RMBG 2.0 -{" "}
             {detectedDevice === "webgpu"
               ? "WebGPU"
               : detectedDevice === "wasm"
