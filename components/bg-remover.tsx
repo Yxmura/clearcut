@@ -85,10 +85,13 @@ export function BgRemover() {
       let model: any;
       let device = "webgpu";
 
+      const sessionOpts = { graphOptimizationLevel: 'disabled' } as any;
+
       try {
         model = await AutoModel.from_pretrained(MODEL_ID, {
           device: "webgpu",
           dtype: "fp16",
+          session_options: sessionOpts,
           progress_callback: progressCb,
         } as any);
       } catch {
@@ -98,6 +101,7 @@ export function BgRemover() {
         model = await AutoModel.from_pretrained(MODEL_ID, {
           device: "wasm",
           dtype: "fp16",
+          session_options: sessionOpts,
           progress_callback: progressCb,
         } as any);
       }
