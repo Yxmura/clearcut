@@ -20,6 +20,7 @@ export interface ImageResult {
 }
 
 const MODEL_ID = "yamura4/RMBG-2.0-ONNX";
+const MODEL_FILE = "model_fp16_fixed_shape";
 const MODEL_SIZE_MB = 490;
 
 export function BgRemover() {
@@ -85,13 +86,11 @@ export function BgRemover() {
       let model: any;
       let device = "webgpu";
 
-      const sessionOpts = { graphOptimizationLevel: 'disabled' } as any;
-
       try {
         model = await AutoModel.from_pretrained(MODEL_ID, {
           device: "webgpu",
-          dtype: "fp16",
-          session_options: sessionOpts,
+          dtype: "fp32",
+          model_file_name: MODEL_FILE,
           progress_callback: progressCb,
         } as any);
       } catch {
@@ -100,8 +99,8 @@ export function BgRemover() {
         (env as any).backends.onnx.wasm.proxy = false;
         model = await AutoModel.from_pretrained(MODEL_ID, {
           device: "wasm",
-          dtype: "fp16",
-          session_options: sessionOpts,
+          dtype: "fp32",
+          model_file_name: MODEL_FILE,
           progress_callback: progressCb,
         } as any);
       }
