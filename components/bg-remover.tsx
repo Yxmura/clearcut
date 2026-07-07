@@ -89,7 +89,6 @@ export function BgRemover() {
         model = await AutoModel.from_pretrained(MODEL_ID, {
           device: "webgpu",
           dtype: "fp16",
-          model_file_name: "model_fp16",
           progress_callback: progressCb,
         } as any);
       } catch {
@@ -99,7 +98,6 @@ export function BgRemover() {
         model = await AutoModel.from_pretrained(MODEL_ID, {
           device: "wasm",
           dtype: "fp16",
-          model_file_name: "model_fp16",
           progress_callback: progressCb,
         } as any);
       }
