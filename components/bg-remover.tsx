@@ -20,7 +20,7 @@ export interface ImageResult {
 }
 
 const MODEL_ID = "yamura4/RMBG-2.0-WebGPU";
-const MODEL_SIZE_MB = 1023;
+const MODEL_SIZE_MB = 490;
 
 export function BgRemover() {
   const [state, setState] = useState<ProcessingState>("idle");
@@ -88,7 +88,7 @@ export function BgRemover() {
       try {
         model = await AutoModel.from_pretrained(MODEL_ID, {
           device: "webgpu",
-          dtype: "fp32",
+          dtype: "fp16",
           session_options: { graphOptimizationLevel: 'disabled' },
           progress_callback: progressCb,
         } as any);
