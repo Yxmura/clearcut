@@ -89,10 +89,7 @@ export function BgRemover() {
         model = await AutoModel.from_pretrained(MODEL_ID, {
           device: "webgpu",
           dtype: "fp16",
-          session_options: {
-            graphOptimizationLevel: 'basic',
-            executionMode: 'sequential',
-          },
+          session_options: { executionMode: 'sequential' },
           progress_callback: progressCb,
         } as any);
       } catch {
@@ -160,21 +157,9 @@ export function BgRemover() {
         setCountdown(Math.ceil(remaining));
       }, 1000);
 
-      let { pixel_values } = await processor(image);
-      let alphas: any;
-
-      try {
-        ({ alphas } = await model({ pixel_values }));
-      } catch (e: any) {
-        const msg = e?.message ?? String(e);
-        if (/memory|oom|alloc/i.test(msg)) {
-          console.warn("OOM at 1024, retrying at 768...");
-          ({ pixel_values } = await processor(image, { size: { height: 768, width: 768 } }));
-          ({ alphas } = await model({ pixel_values }));
-        } else {
-          throw e;
-        }
-      }
+      // Process at 768x768 to fit in 1GB GPU (fp16 weights 511MB + activations ~330MB)
+      const { pixel_values } = await processor(image, { size: { height: 768, width: 768 } });
+      const { alphas } = await model({ pixel_values });
 
       if (countdownRef.current) clearInterval(countdownRef.current);
       setCountdown(0);
